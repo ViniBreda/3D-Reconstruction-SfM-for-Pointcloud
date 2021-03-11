@@ -1,0 +1,80 @@
+
+pmvs2
+C:\Users\v_i_b\PycharmProjects\pythonProject1\imgs\CMVS\miranha 5 img.nvm.cmvs\00\
+option-0000
+--------------------------------------------------
+--- Summary of specified options ---
+# of timages: 4 (enumeration)
+# of oimages: 0 (enumeration)
+level: 1  csize: 2
+threshold: 0.7  wsize: 7
+minImageNum: 3  CPU: 4
+useVisData: 1  sequence: -1
+--------------------------------------------------
+Reading images: ****
+023 4  Harris running ... Harris running ...Harris running ...Harris running ...1572 harris done
+1531 harris done
+DoG running...DoG running...1576 harris done
+DoG running...1518 harris done
+DoG running...2036 dog done
+2028 dog done
+2022 dog done
+2026 dog done
+done
+adding seeds 
+(2,102)(1,99)(3,98)(0,37)done
+---- Initial: 0 secs ----
+Total pass fail0 fail1 refinepatch: 22105 477 21048 580 1057
+Total pass fail0 fail1 refinepatch: 100 2.15788 95.2183 2.62384 4.78172
+Expanding patches...
+---- EXPANSION: 6 secs ----
+Total pass fail0 fail1 refinepatch: 42490 31754 8118 2618 34372
+Total pass fail0 fail1 refinepatch: 100 74.7329 19.1057 6.16145 80.8943
+FilterOutside
+mainbody: 
+Gain (ave/var): 0.782877 0.270076
+32088 -> 31980 (99.6634%)	0 secs
+Filter Exact: ****
+31980 -> 27205 (85.0688%)	0 secs
+FilterNeighbor:	27205 -> 20348 (74.7951%)	0 secs
+FilterGroups:	20
+20348 -> 17949 (88.2101%)	0 secs
+STATUS: 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 
+Expanding patches...
+---- EXPANSION: 4 secs ----
+Total pass fail0 fail1 refinepatch: 33173 14483 8216 10474 24957
+Total pass fail0 fail1 refinepatch: 100 43.659 24.7671 31.5739 75.2329
+FilterOutside
+mainbody: 
+Gain (ave/var): 0.913346 0.318633
+32432 -> 32332 (99.6917%)	0 secs
+Filter Exact: ****
+32332 -> 26056 (80.5889%)	0 secs
+FilterNeighbor:	26056 -> 22062 (84.6715%)	0 secs
+FilterGroups:	20
+22062 -> 20028 (90.7805%)	0 secs
+STATUS: 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 
+Expanding patches...
+---- EXPANSION: 4 secs ----
+Total pass fail0 fail1 refinepatch: 29762 13213 7522 9027 22240
+Total pass fail0 fail1 refinepatch: 100 44.3955 25.2738 30.3306 74.7262
+FilterOutside
+mainbody: 
+Gain (ave/var): 1.05982 0.364313
+33241 -> 33155 (99.7413%)	0 secs
+Filter Exact: ****
+33155 -> 26193 (79.0017%)	0 secs
+FilterNeighbor:	26193 -> 22639 (86.4315%)	0 secs
+FilterGroups:	20
+22639 -> 20784 (91.8062%)	0 secs
+STATUS: 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 
+---- Total: 0 secs ----

@@ -1,0 +1,157 @@
+
+pmvs2
+C:\Users\v_i_b\PycharmProjects\pythonProject1\imgs\CMVS\miranha.nvm.cmvs\00\
+option-0000
+--------------------------------------------------
+--- Summary of specified options ---
+# of timages: 38 (enumeration)
+# of oimages: 0 (enumeration)
+level: 1  csize: 2
+threshold: 0.7  wsize: 7
+minImageNum: 3  CPU: 4
+useVisData: 1  sequence: -1
+--------------------------------------------------
+Reading images: **************************************
+471011    Harris running ...Harris running ...Harris running ...Harris running ...1499 harris done
+DoG running...1653 harris done
+DoG running...1566 harris done
+DoG running...1609 harris done
+DoG running...2020 dog done
+2037 dog done
+13 Harris running ...14 Harris running ...2000 dog done
+15 Harris running ...1988 dog done
+17 Harris running ...1638 harris done
+DoG running...1658 harris done
+DoG running...1605 harris done
+DoG running...1587 harris done
+DoG running...2008 dog done
+20 Harris running ...2015 dog done
+29 Harris running ...2016 dog done
+33 Harris running ...2027 dog done
+35 Harris running ...1641 harris done
+DoG running...1643 harris done
+DoG running...1661 harris done
+DoG running...1529 harris done
+DoG running...2029 dog done
+36 Harris running ...2006 dog done
+40 Harris running ...1998 dog done
+41 Harris running ...2033 dog done
+43 Harris running ...1487 harris done
+DoG running...1589 harris done
+DoG running...1528 harris done
+DoG running...1551 harris done
+DoG running...2031 dog done
+45 Harris running ...2040 dog done
+2034 dog done
+46 Harris running ...47 Harris running ...2038 dog done
+48 Harris running ...1599 harris done
+DoG running...1580 harris done
+DoG running...1567 harris done
+DoG running...1605 harris done
+DoG running...2029 dog done
+49 Harris running ...2036 dog done
+50 Harris running ...2036 dog done
+52 Harris running ...2026 dog done
+53 Harris running ...1590 harris done
+DoG running...1633 harris done
+DoG running...1629 harris done
+DoG running...1613 harris done
+DoG running...2029 dog done
+57 Harris running ...1997 dog done
+58 Harris running ...2035 dog done
+64 Harris running ...2000 dog done
+66 Harris running ...1522 harris done
+DoG running...1623 harris done
+DoG running...1506 harris done
+DoG running...1625 harris done
+DoG running...2030 dog done
+67 Harris running ...2024 dog done
+68 Harris running ...2023 dog done
+69 Harris running ...2019 dog done
+70 Harris running ...1580 harris done
+DoG running...1479 harris done
+DoG running...1559 harris done
+DoG running...1624 harris done
+DoG running...2032 dog done
+71 Harris running ...2040 dog done
+73 Harris running ...2018 dog done
+74 Harris running ...2035 dog done
+82 Harris running ...1626 harris done
+DoG running...1668 harris done
+DoG running...1680 harris done
+DoG running...1531 harris done
+DoG running...2013 dog done
+83 Harris running ...2026 dog done
+84 Harris running ...2027 dog done
+2039 dog done
+1581 harris done
+DoG running...1596 harris done
+DoG running...2035 dog done
+2034 dog done
+done
+adding seeds 
+(9,604)(12,831)(27,541)(0,581)(1,1565)(29,57)(15,69)(24,1523)(28,49)(18,197)(13,116)(23,26)(33,6)(32,186)(37,2)(20,7)(31,377)(26,39)(19,15)(22,0)(34,0)(17,9)(36,649)(30,27)(11,0)(6,260)(4,6)(5,37)(7,178)(8,269)(14,0)(10,0)(21,0)(16,0)(3,1)(25,0)(2,0)(35,0)done
+---- Initial: 0 secs ----
+Total pass fail0 fail1 refinepatch: 213040 13386 168194 31460 44846
+Total pass fail0 fail1 refinepatch: 100 6.28333 78.9495 14.7672 21.0505
+Expanding patches...refinePatchBFGS failed!
+
+---- EXPANSION: 105 secs ----
+Total pass fail0 fail1 refinepatch: 415754 307801 70860 37093 344894
+Total pass fail0 fail1 refinepatch: 100 74.0344 17.0437 8.92186 82.9563
+FilterOutside
+mainbody: 
+Gain (ave/var): 0.990833 1.19855
+315459 -> 267138 (84.6823%)	0 secs
+Filter Exact: **************************************
+267138 -> 184895 (69.2133%)	0 secs
+FilterNeighbor:	184895 -> 107267 (58.0151%)	0 secs
+FilterGroups:	20
+107267 -> 81999 (76.4438%)	0 secs
+STATUS: 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 
+Expanding patches...refinePatchBFGS failed!
+refinePatchBFGS failed!
+refinePatchBFGS failed!
+refinePatchBFGS failed!
+refinePatchBFGS failed!
+
+---- EXPANSION: 73 secs ----
+Total pass fail0 fail1 refinepatch: 333069 142335 64283 126451 268786
+Total pass fail0 fail1 refinepatch: 100 42.7344 19.3002 37.9654 80.6998
+FilterOutside
+mainbody: 
+Gain (ave/var): 1.52513 1.24945
+224334 -> 218895 (97.5755%)	0 secs
+Filter Exact: **************************************
+218895 -> 170204 (77.756%)	0 secs
+FilterNeighbor:	170204 -> 141539 (83.1584%)	0 secs
+FilterGroups:	20
+141539 -> 126351 (89.2694%)	0 secs
+STATUS: 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 
+Expanding patches...refinePatchBFGS failed!
+refinePatchBFGS failed!
+refinePatchBFGS failed!
+
+---- EXPANSION: 69 secs ----
+Total pass fail0 fail1 refinepatch: 301991 123832 63948 114211 238043
+Total pass fail0 fail1 refinepatch: 100 41.0052 21.1755 37.8193 78.8245
+FilterOutside
+mainbody: 
+Gain (ave/var): 1.72065 1.42019
+250183 -> 245381 (98.0806%)	0 secs
+Filter Exact: **************************************
+245381 -> 189970 (77.4184%)	0 secs
+FilterNeighbor:	189970 -> 163376 (86.0009%)	0 secs
+FilterGroups:	20
+163376 -> 148549 (90.9246%)	0 secs
+STATUS: 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 
+---- Total: 0 secs ----
