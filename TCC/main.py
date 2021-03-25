@@ -6,7 +6,7 @@ from tkinter import ttk
 from tkinter import filedialog
 import threading
 import os
-from itertools import repeat
+import open3d as o3d
 
 LARGE_FONT = ("Verdana", 12)
 LARGE_BOLD_FONT = ("Verdana", 12, "bold")
@@ -230,6 +230,7 @@ class Reconstruct(tk.Frame):
         # note we also have to specify the type to retrieve other wise we only get a
         # FileNode object back instead of a matrix
         self.mtx = cv_file.getNode("K").mat()
+        self.mtx_inv = np.linalg.inv(self.mtx)
         self.dist = cv_file.getNode("D").mat()
 
         cv_file.release()
@@ -256,6 +257,17 @@ class Reconstruct(tk.Frame):
             self.r5["state"] = "disabled"
             self.r6["state"] = "disabled"
 
+    def _in_front_of_both_cameras(self, first_points, second_points, rot, trans):
+        rot_inv = rot
+        for first, second in zip(first_points, second_points):
+            first_z = np.dot(rot[0, :] - second[0] * rot[2, :], trans) / np.dot(rot[0, :] - second[0] * rot[2, :], second)
+            first_3d_point = np.array([first[0] * first_z, second[0] * first_z, first_z])
+            second_3d_point = np.dot(rot.T, first_3d_point) - np.dot(rot.T, trans)
+
+        if first_3d_point[2] < 0 or second_3d_point[2] < 0:
+            return False
+        return True
+
     def video_routine(self):
         self.load_coefficients(cyml)
         self.b2.config(state="disabled")
@@ -264,62 +276,117 @@ class Reconstruct(tk.Frame):
             self.new_folder()
             vidcap = cv.VideoCapture(self.video[0])
             length = int(vidcap.get(cv.CAP_PROP_FRAME_COUNT))
+            print("video length: " + str(length))
+            success, size = vidcap.read()
             framelist = list(range(0, length, self.frameskip.get()))
-            success, image = vidcap.read()
             count = 0
             sift = cv.SIFT_create()
             matcher = cv.DescriptorMatcher_create(cv.DescriptorMatcher_FLANNBASED)
-            knn_matches = []
-            h, w = image.shape[:2]
+            # knn_matches = []
+            keypoints1 = []
+            keypoints2 = []
+            descriptors1 = []
+            descriptors2 = []
+            h, w = size.shape[:2]
             self.newcameramtx, self.roi = cv.getOptimalNewCameraMatrix(self.mtx, self.dist, (w, h), 1, (w, h))
-            # undistort
             while success:
                 if count in framelist:
-                    print("Count: "+str(count))
-                    indice = framelist.index(count)
-                    print("Indice: " + str(indice))
-                    dst = cv.undistort(image, self.mtx, self.dist, None, self.newcameramtx)
-                    x, y, w, h = self.roi
-                    dst = dst[y:y+h, x:x+w] # undistorted img
-                    gray = cv.cvtColor(dst, cv.COLOR_BGR2GRAY)
-                    self.kp.append(sift.detectAndCompute(gray, None)[0])
-                    self.des.append(sift.detectAndCompute(gray, None)[1])
-                    # img = cv.drawKeypoints(dst, self.kp[indice], dst)
+                    i = framelist.index(count)
+                    print(i)
+                    print("img 1: " + str(count))
+                    print("img 2: " + str(count + self.frameskip.get()))
+                    vidcap.set(1, count)
+                    success, image1 = vidcap.read()
+                    vidcap.set(1, count+self.frameskip.get())
+                    # try:
+                    success, image2 = vidcap.read()
+                    cv.imshow("Imagem 1", image1)
+                    cv.imshow("Imagem 2", image2)
+                    k = cv.waitKey(0)
+                    if success:
+                        dst1 = cv.undistort(image1, self.mtx, self.dist, None, self.newcameramtx)
+                        dst2 = cv.undistort(image2, self.mtx, self.dist, None, self.newcameramtx)
+                        x, y, w, h = self.roi
+                        dst1 = dst1[y:y + h, x:x + w]  # undistorted img
+                        dst2 = dst2[y:y + h, x:x + w]  # undistorted img
+                        gray1 = cv.cvtColor(dst1, cv.COLOR_BGR2GRAY)
+                        gray2 = cv.cvtColor(dst2, cv.COLOR_BGR2GRAY)
+                        keypoints1, descriptors1 = sift.detectAndCompute(gray1, None)
+                        keypoints2, descriptors2 = sift.detectAndCompute(gray2, None)
+                        # good_matches = matcher.match(descriptors1, descriptors2)
+                        knn_matches = matcher.knnMatch(descriptors1, descriptors2, 2)
 
-                    if count != 0:
-                        knn_matches.append(matcher.knnMatch(self.des[indice], self.des[indice-1], 2))
-                    # cv.imwrite(self.newpath + '/' + "frame%d.jpg" % indice, img)
-                    success, image = vidcap.read()
-                elif count > framelist[len(framelist)-1]:
-                    break
+                        ratio_thresh = 0.7
+                        good_matches = []
+                        for m, n in knn_matches:
+                            if m.distance < ratio_thresh * n.distance:
+                                good_matches.append(m)
+
+                        first_match_points = np.zeros((len(good_matches), 2), dtype=np.float32)
+                        second_match_points = np.zeros_like(first_match_points)
+                        for i in range(len(good_matches)):
+                            first_match_points[i] = keypoints1[good_matches[i].queryIdx].pt
+                            second_match_points[i] = keypoints2[good_matches[i].trainIdx].pt
+
+                        self.match_pts1 = first_match_points
+                        self.match_pts2 = second_match_points
+
+                        self.F, self.Fmask = cv.findFundamentalMat(self.match_pts1, self.match_pts2, cv.FM_RANSAC, 0.1, 0.99)
+                        self.E = self.mtx.T.dot(self.F).dot(self.mtx)
+                        U, S, Vt = np.linalg.svd(self.E)
+                        W = np.array([0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]).reshape(3, 3)
+
+                        first_inliers = []
+                        second_inliers = []
+                        for i in range(len(self.Fmask)):
+                            if self.Fmask[i]:
+                                first_inliers.append(self.mtx_inv.dot([self.match_pts1[i][0], self.match_pts1[i][1], 1.0]))
+                                second_inliers.append(self.mtx_inv.dot([self.match_pts2[i][0], self.match_pts2[i][1], 1.0]))
+
+                        R = U.dot(W).dot(Vt)
+                        T = U[:, 2]
+
+                        if not self._in_front_of_both_cameras(first_inliers, second_inliers, R, T):
+                            # Second choice: R = U * W * Vt, T = -u_3
+                            T = - U[:, 2]
+
+                        if not self._in_front_of_both_cameras(first_inliers, second_inliers, R, T):
+                            # Third choice: R = U * Wt * Vt, T = u_3
+                            R = U.dot(W.T).dot(Vt)
+                            T = U[:, 2]
+
+                        if not self._in_front_of_both_cameras(first_inliers, second_inliers, R, T):
+                            # Fourth choice: R = U * Wt * Vt, T = -u_3
+                            T = - U[:, 2]
+
+                        self.match_inliers1 = first_inliers
+                        self.match_inliers2 = second_inliers
+                        self.Rt1 = np.hstack((np.eye(3), np.zeros((3, 1))))
+                        self.Rt2 = np.hstack((R, T.reshape(3, 1)))
+
+                        first_inliers = np.array(self.match_inliers1).reshape(-1, 3)[:, :2]
+                        second_inliers = np.array(self.match_inliers2).reshape(-1, 3)[:, :2]
+
+                        pts4D = cv.triangulatePoints(self.Rt1, self.Rt2, first_inliers.T, second_inliers.T).T
+                        pts3D = pts4D[:, :3] / np.repeat(pts4D[:, 3], 3).reshape(-1, 3)
+
+                        pcd = o3d.geometry.PointCloud()
+                        pcd.points = o3d.utility.Vector3dVector(pts3D)
+                        o3d.io.write_point_cloud("PointCloud" + str(i) + ".ply", pcd, write_ascii=True)
+
+                        o3d.visualization.draw_geometries([pcd])
+                        cv.waitKey()
+
+                    # except Exception as e:
+                    #     print(e)
+                    #     break
+
+
                 count += 1
 
-            ratio_thresh = 0.7
-            good_matches = [[] for o in repeat(None, len(knn_matches))]
-            src_pts = [[] for o in repeat(None, len(knn_matches))]
-            dst_pts = [[] for o in repeat(None, len(knn_matches))]
-            # pairInliersCt = {}
-            h1 = []
-            h2 = []
-            inliers = np.zeros(len(src_pts))
-            for i in range(len(knn_matches)):
-                for j in range(len(knn_matches[i])):
-                    if knn_matches[i][j][0].distance < ratio_thresh * knn_matches[i][j][1].distance:
-                        good_matches[i].append(knn_matches[i][j][0])
-                if len(good_matches[i]) > 10 and i != 0:
-                    src_pts = np.float32([ self.kp[i-1][m.queryIdx].pt for m in good_matches[i]]).reshape(-1, 1, 2)
-                    dst_pts = np.float32([ self.kp[i][m.trainIdx].pt for m in good_matches[i]]).reshape(-1, 1, 2)
 
-                    fundamental = cv.findFundamentalMat(src_pts, dst_pts, cv.FM_RANSAC, 1.0, 0.98)
-                    h1, h2 = cv.stereoRectify(self.newcameramtx, self.dist)
 
-                    # M, mask = cv.findHomography(src_pts, dst_pts, cv.RANSAC, 5.0)
-                    # matchesMask = mask.ravel().tolist()
-                    # numInliers = cv.countNonZero(matchesMask)
-                    # inliersRatio = numInliers/len(good_matches[i])
-                    # pairInliersCt[inliersRatio] = {i: j}
-                # else:
-                #     pairInliersCt[1.0] = {i: j}
+
 
 
 
@@ -336,9 +403,8 @@ class Reconstruct(tk.Frame):
         self.video = []
         self.images = []
         self.mtx = []
+        self.mtx_inv = []
         self.dist = []
-        self.des = []
-        self.kp = []
 
         ph = tk.Label(self, text="                                   ")
         title = tk.Label(self, text="Reconstrução 3D", font=LARGE_BOLD_FONT)
